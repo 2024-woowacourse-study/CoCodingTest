@@ -2,6 +2,7 @@
 #include <vector>
 #include <queue>
 #include <math.h>
+#include <cstring>
 
 using namespace std;
 
@@ -18,14 +19,15 @@ int main() {
     int n, h, d;
     int answer = 99999999;
     queue<User> q;
+    int currentIndex = 0;
     int dx[4] = {-1, 1, 0, 0};
     int dy[4] = {0, 0, -1, 1};
 
     cin>>n>>h>>d;
 
-    char square[11][n][n];
-    int checked[11][n][n];
-    fill(&checked[0][0][0], &checked[10][n-1][n], 0);
+    char square[101][n][n];
+    int checked[101][n][n];
+    memset(checked, 0, sizeof(checked));
 
     for(int i=0; i<n; i++) {
         string s;
@@ -59,18 +61,15 @@ int main() {
             int userLife = user.life;
             int userUmbrella = user.umbrella;
             if(square[positionZ][positionX][positionY] == 'U') {
-                userUmbrella = userUmbrella > 0 ? d : d-1;
+                userUmbrella = d-1;
 
                 checked[positionZ][positionX][positionY] = 1;
                 square[positionZ][positionX][positionY] = '.';
+                currentIndex++;
 
-                for(int j=0; j<n; j++) {
-                    for(int k=0; k<n; k++) {
-                        square[positionZ+1][j][k] = square[positionZ][j][k];
-                    }
-                }
-
-                User newUser = {positionX, positionY, positionZ+1, userLife, userUmbrella, moveCount};
+                memcpy(square[currentIndex], square[positionZ], sizeof(square[currentIndex]));
+                memset(checked[currentIndex], 0, sizeof(checked[currentIndex]));
+                User newUser = {positionX, positionY, currentIndex, userLife, userUmbrella, moveCount};
                 q.push(newUser);
                 continue;
             }
